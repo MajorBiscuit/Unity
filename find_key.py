@@ -1,4 +1,5 @@
 # Author = Andreas Theodosiou
+# Version = 1.0
 # A function that returns the dictionary key in which a value belongs
 
 entity = {'speed': ['m/s', 'km'], 'length': ['m', 'in']}
