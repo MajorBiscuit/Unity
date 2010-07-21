@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-#!/usr/bin/env python3
 # Filename: unity.py
 # Author: Andreas Theodosiou
 # Description: A tool that accepts a quantity in a certain unit, and outputs
