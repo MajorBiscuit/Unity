@@ -5,6 +5,7 @@
 # that quantity in a number of other units.
 
 import sys
+import string
 
 # Units will store the units supported by unity, entity in which they belong
 # and the conversion rate which will be used to convert them to the base unit
@@ -51,6 +52,28 @@ def convert_to_base(quantity, unit, dic):
     base_unit = quantity * conversion_rate
     return base_unit
     
+def format_conv_list(conv_list, unit):
+    index = 0
+    while index < len(conv_list):
+        if unit in conv_list[index]:
+            del conv_list[index]
+            formatted_conv_list = conv_list
+            return formatted_conv_list
+            break
+        else:
+            index += 1
+            continue
+
+def print_conversion(conv_list, base_unit):
+    index = 0
+    while index < len(conv_list):
+        unit = str(conv_list[index][0])
+        rate = float(conv_list[index][1])
+        converted_quantity = base_unit * rate
+        print(converted_quantity, unit)
+        index += 1
+
+
 if len(sys.argv) < 2:
     print('No action specified')
     print('Terminating unity')
@@ -62,25 +85,27 @@ entity = get_entity(original_unit, units)
 base_unit = convert_to_base(original_quantity, original_unit, units)
 conversion_list = entities[entity]
 
-index = 0
-while index < len(conversion_list):
-    if original_unit in conversion_list[index]:
-        del conversion_list[index]
-        formatted_conversion_list = conversion_list
-        break
-    else:
-        index += 1
-        continue
+formatted_conv_list = format_conv_list(conversion_list, original_unit)
+#index = 0
+#while index < len(conversion_list):
+#    if original_unit in conversion_list[index]:
+#        del conversion_list[index]
+#        formatted_conversion_list = conversion_list
+#        break
+#    else:
+#        index += 1
+#        continue
 
 print('Input:', original_quantity, original_unit)
 print('Interpretation', entity)
 print('Unit conversions:')
 
-idx = 0 
-while idx < len(formatted_conversion_list):
-    unit = str(formatted_conversion_list[idx][0])
-    rate = float(formatted_conversion_list[idx][1])
-    converted_quantity = base_unit * rate
-    print(converted_quantity, unit)
-    idx += 1
+print_conversion(formatted_conv_list, base_unit)
+#idx = 0 
+#while idx < len(formatted_conversion_list):
+#    unit = str(formatted_conversion_list[idx][0])
+#    rate = float(formatted_conversion_list[idx][1])
+#    converted_quantity = base_unit * rate
+#    print(converted_quantity, unit)
+#    idx += 1
 
