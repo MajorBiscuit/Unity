@@ -43,6 +43,34 @@ def get_unit(dic):
         print('Usage unity.py [quantity] [unit]')
         sys.exit()
 
+# New function for implementing cli interactive mode
+def interactive_get_data(dic):
+    while True:
+        try:
+            line = input('Enter the your quantity and the unit: ')
+            data_list = str.split(line)
+            if not data_list:
+                print('That is useless')
+                continue
+            else:
+                quantity_test = float(data_list[0])
+                if quantity_test >= 1:
+                    quantity = quantity_test
+                    return quantity
+                else:
+                    print('You have to enter a number that is greater than zero')
+                    continue
+                unit_test = str(data_list[1])
+                if unit_test in dic:
+                    unit = unit_test
+                    return unit
+                else:
+                    print('The unit', unit_test, 'is not supported by unity')
+                    continue
+        except ValueError as error:
+            print('Input [quantity] [unit]')
+            print(error)
+
 def get_entity(unit, dic):
     entity = dic[unit][0]
     return entity
