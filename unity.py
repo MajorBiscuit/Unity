@@ -26,21 +26,18 @@ import string
 # and the conversion rate which will be used to convert them to the base unit
 # for that entity.
 
-units = {'m/s': ['speed', 1.0], 'km/h': ['speed', 0.2778], 'mph': ['speed', 0.447], 'kn': ['speed', 0.5144], 'm': ['length', 1], 'ft': ['length', 0.3048]} 
+units = {'m/s': ['speed', 1.0], 'km/h': ['speed', 0.2778], 'mph': ['speed', 0.447], 'kn': ['speed', 0.5144], 'm': ['length', 1], 'ft': ['length', 0.3048], 'in': ['length', 0.0254], 'cm': ['length', 0.01], 'mm': ['length', 0.001]} 
 
 # Entities will store all the units and conversion rates for those units of
 # each entity.
 
-entities = {'speed': [['m/s', 1], ['km/h', 3.6], ['mph', 2.237], ['kn', 1.944]], 'length': [['m', 1], ['ft', 3.281]]}
+entities = {'speed': [['m/s', 1], ['km/h', 3.6], ['mph', 2.237], ['kn', 1.944]], 'length': [['m', 1], ['ft', 3.281], ['in', 39.37], ['cm', 100], ['mm', 1000]]}
 
 def get_quantity():
     try:
         quantity_test = float(sys.argv[1])
-        if quantity_test >= 1:
-            quantity = quantity_test
-            return quantity
-        else:
-            print('You have to enter a number that is greater than zero')
+        quantity = quantity_test
+        return quantity
     except ValueError:
         print('Usage unity.py [quantity] [unit]')
         print('In other words you are using unity wrong')
@@ -58,6 +55,12 @@ def get_unit(dic):
         print('Usage unity.py [quantity] [unit]')
         sys.exit()
 
+    except IndexError as error:
+        print(error)
+        print()
+        print('Index error was probably caused because you did not enter a unit')
+        sys.exit()
+
 # New function for implementing cli interactive mode
 def interactive_get_data(dic):
     while True:
@@ -70,14 +73,14 @@ def interactive_get_data(dic):
                 continue
             elif str(data_list[0]) == 'help':
                 print()
-                print('''Hello unity is a simple humble unit convert. Input a number followed by a unit, and unity will try to output a list
-                possible unit conversions''')
+                print('''Hello unity is a simple humble unit converter. Input a number followed by a unit, and unity will try to output a list possible unit conversions''')
                 print()
                 continue
             elif str(data_list[0]) == 'about':
                 print()
                 print('Unity Version 0.2')
                 print('Author: Andreas Theodosiou')
+                print('Please report bugs at http://github.com/MajorBiscuit/Unity/issues')
                 print()
                 continue
             elif str(data_list[0]) == 'quit':
@@ -88,12 +91,8 @@ def interactive_get_data(dic):
                 sys.exit()
             else:
                 quantity_test = float(data_list[0])
-                if quantity_test >= 1:
-                    quantity = quantity_test
-                    list.append(quantity)
-                else:
-                    print('You have to enter a number that is greater than zero')
-                    continue
+                quantity = quantity_test
+                list.append(quantity)
                 unit_test = str(data_list[1])
                 if unit_test in dic:
                     unit = unit_test
@@ -104,9 +103,16 @@ def interactive_get_data(dic):
                 if list:
                     return list
         except ValueError as error:
+            print()
             print('Input [quantity] [unit]')
             print(error)
+            continue
 
+        except IndexError as error:
+            print(error)
+            print()
+            print('Index error was probably caused because you did not enter a unit')
+            continue
 
 def get_entity(unit, dic):
     entity = dic[unit][0]
@@ -140,7 +146,6 @@ def print_conversion(conv_list, base_unit):
 
 
 if len(sys.argv) < 2:
-    entities = {'speed': [['m/s', 1], ['km/h', 3.6], ['mph', 2.237], ['kn', 1.944]], 'length': [['m', 1], ['ft', 3.281]]}
     print('No command line arguments found, entering interactive mode')
     while True:
         original_quantity, original_unit = interactive_get_data(units)
@@ -169,6 +174,7 @@ else:
     formatted_conv_list = format_conv_list(conversion_list, original_unit)
 
 
+    print()
     print('Input:', original_quantity, original_unit)
     print('Interpretation', entity)
     print('Unit conversions:')
