@@ -33,6 +33,7 @@ units = {'m/s': ['speed', 1.0], 'km/h': ['speed', 0.2778], 'mph': ['speed', 0.44
 
 entities = {'speed': [['m/s', 1], ['km/h', 3.6], ['mph', 2.237], ['kn', 1.944]], 'length': [['m', 1], ['ft', 3.281], ['in', 39.37], ['cm', 100], ['mm', 1000]]}
 
+# get_quantity() will attempt to get the first argument from the command line, if there is any and convert it to a float. c
 def get_quantity():
     try:
         quantity_test = float(sys.argv[1])
@@ -43,6 +44,8 @@ def get_quantity():
         print('In other words you are using unity wrong')
         sys.exit()
 
+# get_unit(dic) gets the unit from the command line parameter, checks if it exists inside the dictionary dic, if it does it returns the unit as a string. If it does not
+# informs the user that the unit used is not supported 
 def get_unit(dic):
     try:
         unit_test = str(sys.argv[2])
@@ -61,7 +64,8 @@ def get_unit(dic):
         print('Index error was probably caused because you did not enter a unit')
         sys.exit()
 
-# New function for implementing cli interactive mode
+# New function for implementing cli interactive mode.
+# interactive_get_data(dic) gets input for the user, splits the quantity and unit and returns them as a list.
 def interactive_get_data(dic):
     while True:
         try:
@@ -114,15 +118,18 @@ def interactive_get_data(dic):
             print('Index error was probably caused because you did not enter a unit')
             continue
 
+# get_entity(unity, dic) finds what kind of quantity the input is and returns it.
 def get_entity(unit, dic):
     entity = dic[unit][0]
     return entity
 
+# convert_to_base(quantity, unit, dic) finds the entry for the unit received by the user inside the dictionary and uses its conversion to base unit rate to convert it to a base unit
 def convert_to_base(quantity, unit, dic):
     conversion_rate = dic[unit][1]
     base_unit = quantity * conversion_rate
     return base_unit
-    
+
+# This function goes through the list of units and rates and removes the entry of the original quantity's unit in order to avoid converting the base quantity back to the original quantity entered by the user.
 def format_conv_list(conv_list, unit):
     index = 0
     while index < len(conv_list):
@@ -135,6 +142,7 @@ def format_conv_list(conv_list, unit):
             index += 1
             continue
 
+# print_conversion(conv_list, base_unit) iterates through the conversion list and mutliplies the base_unit with the conversion rates to find the corresponding quantities in different units.
 def print_conversion(conv_list, base_unit):
     index = 0
     while index < len(conv_list):
@@ -144,26 +152,25 @@ def print_conversion(conv_list, base_unit):
         print(converted_quantity, unit)
         index += 1
 
-
-if len(sys.argv) < 2:
+# Check if there are arguments passed when running the apllication.
+if len(sys.argv) < 2: #No arguments
     print('No command line arguments found, entering interactive mode')
     while True:
-        original_quantity, original_unit = interactive_get_data(units)
-        entity = get_entity(original_unit, units)
-        base_unit = convert_to_base(original_quantity, original_unit, units)
-        conversion_list = entities[entity][:]
-        formatted_conv_list = format_conv_list(conversion_list, original_unit)
+        original_quantity, original_unit = interactive_get_data(units) # Get input from the user
+        entity = get_entity(original_unit, units)  # Find the type of quantity of the input
+        base_unit = convert_to_base(original_quantity, original_unit, units) # Convert to the base unit for that quantity
+        conversion_list = entities[entity][:] # Get list of units for that type of quantity
+        formatted_conv_list = format_conv_list(conversion_list, original_unit) # Remove input quantity from the list
 
         print()
         print('Input:', original_quantity, original_unit)
         print('Interpretation', entity)
         print('Unit conversions:')
 
-        print_conversion(formatted_conv_list, base_unit)
+        print_conversion(formatted_conv_list, base_unit) # Run the conversion proccess and print the results
         print()
 
-
-
+# In case there were arguments, get quantity and unit from command line arguments and repeat the process of converting.
 else:
     original_quantity = get_quantity()
     original_unit = get_unit(units)
