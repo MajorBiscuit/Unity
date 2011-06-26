@@ -19,19 +19,18 @@
 # Description: A tool that accepts a quantity in a certain unit, and outputs
 # that quantity in a number of other units.
 
-import sys
-import string
+import sys, string
 
 # Units will store the units supported by unity, entity in which they belong
 # and the conversion rate which will be used to convert them to the base unit
 # for that entity.
 
-units = {'m/s': ['speed', 1.0], 'km/h': ['speed', 0.2778], 'mph': ['speed', 0.447], 'kn': ['speed', 0.5144], 'm': ['length', 1], 'ft': ['length', 0.3048], 'in': ['length', 0.0254], 'cm': ['length', 0.01], 'mm': ['length', 0.001]} 
+units = {'m/s': ('speed', 1.0), 'km/h': ('speed', 0.2778), 'mph': ('speed', 0.447), 'kn': ('speed', 0.5144), 'm': ('length', 1), 'ft': ('length', 0.3048), 'in': ('length', 0.0254), 'cm': ('length', 0.01), 'mm': ('length', 0.001)} 
 
 # Entities will store all the units and conversion rates for those units of
 # each entity.
 
-entities = {'speed': [['m/s', 1], ['km/h', 3.6], ['mph', 2.237], ['kn', 1.944]], 'length': [['m', 1], ['ft', 3.281], ['in', 39.37], ['cm', 100], ['mm', 1000]]}
+entities = {'speed': (('m/s', 1), ('km/h', 3.6), ('mph', 2.237), ('kn', 1.944)), 'length': (('m', 1), ('ft', 3.281), ('in', 39.37), ('cm', 100), ('mm', 1000))}
 
 # get_quantity() will attempt to get the first argument from the command line, if there is any and convert it to a float. c
 def get_quantity():
@@ -77,7 +76,7 @@ def interactive_get_data(dic):
                 continue
             elif str(data_list[0]) == 'help':
                 print()
-                print('''Hello unity is a simple humble unit converter. Input a number followed by a unit, and unity will try to output a list possible unit conversions''')
+                print('''Hello unity is a simple humble unit converter. Input a number followed by a unit, and unity will output a list possible unit conversions''')
                 print()
                 continue
             elif str(data_list[0]) == 'about':
@@ -108,7 +107,7 @@ def interactive_get_data(dic):
                     return list
         except ValueError as error:
             print()
-            print('Input [quantity] [unit]')
+            print('Input [quantity) [unit)')
             print(error)
             continue
 
@@ -129,25 +128,24 @@ def convert_to_base(quantity, unit, dic):
     base_unit = quantity * conversion_rate
     return base_unit
 
-# This function goes through the list of units and rates and removes the entry of the original quantity's unit in order to avoid converting the base quantity back to the original quantity entered by the user.
-def format_conv_list(conv_list, unit):
+# This function goes through the tuple of units and rates and removes the entry of the original quantity's unit in order to avoid converting the base quantity back to the original quantity entered by the user.
+def format_conv_tuple(conv_tuple, unit):
     index = 0
-    while index < len(conv_list):
-        if unit in conv_list[index]:
-            del conv_list[index]
-            formatted_conv_list = conv_list
-            return formatted_conv_list
+    while index < len(conv_tuple):
+        if unit in conv_tuple[index]:
+            formatted_conv_tuple = conv_tuple[:index]+conv_tuple[index+1:]
+            return formatted_conv_tuple
             break
         else:
             index += 1
             continue
 
-# print_conversion(conv_list, base_unit) iterates through the conversion list and mutliplies the base_unit with the conversion rates to find the corresponding quantities in different units.
-def print_conversion(conv_list, base_unit):
+# print_conversion(conv_tuple, base_unit) iterates through the conversion tuple and mutliplies the base_unit with the conversion rates to find the corresponding quantities in different units.
+def print_conversion(conv_tuple, base_unit):
     index = 0
-    while index < len(conv_list):
-        unit = str(conv_list[index][0])
-        rate = float(conv_list[index][1])
+    while index < len(conv_tuple):
+        unit = str(conv_tuple[index][0])
+        rate = float(conv_tuple[index][1])
         converted_quantity = base_unit * rate
         print(converted_quantity, unit)
         index += 1
@@ -159,15 +157,15 @@ if len(sys.argv) < 2: #No arguments
         original_quantity, original_unit = interactive_get_data(units) # Get input from the user
         entity = get_entity(original_unit, units)  # Find the type of quantity of the input
         base_unit = convert_to_base(original_quantity, original_unit, units) # Convert to the base unit for that quantity
-        conversion_list = entities[entity][:] # Get list of units for that type of quantity
-        formatted_conv_list = format_conv_list(conversion_list, original_unit) # Remove input quantity from the list
+        conversion_tuple = entities[entity][:] # Get tuple of units for that type of quantity
+        formatted_conv_tuple = format_conv_tuple(conversion_tuple, original_unit) # Remove input quantity from the tuple
 
         print()
         print('Input:', original_quantity, original_unit)
         print('Interpretation', entity)
         print('Unit conversions:')
 
-        print_conversion(formatted_conv_list, base_unit) # Run the conversion proccess and print the results
+        print_conversion(formatted_conv_tuple, base_unit) # Run the conversion proccess and print the results
         print()
 
 # In case there were arguments, get quantity and unit from command line arguments and repeat the process of converting.
@@ -176,9 +174,8 @@ else:
     original_unit = get_unit(units)
     entity = get_entity(original_unit, units)
     base_unit = convert_to_base(original_quantity, original_unit, units)
-    conversion_list = entities[entity]
-
-    formatted_conv_list = format_conv_list(conversion_list, original_unit)
+    conversion_tuple = entities[entity]
+    formatted_conv_tuple = format_conv_tuple(conversion_tuple, original_unit)
 
 
     print()
@@ -186,5 +183,5 @@ else:
     print('Interpretation', entity)
     print('Unit conversions:')
 
-    print_conversion(formatted_conv_list, base_unit)
+    print_conversion(formatted_conv_tuple, base_unit)
 
