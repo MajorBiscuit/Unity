@@ -1,1 +1,1 @@
-Project Unity is a python programm used for unit conversions. Upon entering a unit it automatically generates a list of possible unit conversions for that input. At the moment only m/s, km/h, mph, kn, m, ft, in, cm, and mm are supported.
+Project Unity is a python programm used for unit conversions. Upon entering a unit it automatically generates a list of possible unit conversions for that input. At the moment only m/s, km/h, mph, kn, m, ft, in, cm, mm are supported.
