@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #!/usr/bin/env python3
 
 # Copyright © 2010 Andreas Theodosiou. All rights reserved.
